@@ -144,7 +144,7 @@ fn main() {
         }
 
         handle.draw_rectangle(0, SCREEN_HEIGHT-20, SCREEN_WIDTH, 20, Color::LIGHTGRAY);
-        handle.draw_rectangle_lines(0, SCREEN_HEIGHT-20, SCREEN_WIDTH, 20, Color::BLACK);
+        handle.draw_line(0, SCREEN_HEIGHT-20, SCREEN_WIDTH, SCREEN_HEIGHT-20, Color::WHITE);
 
         handle.draw_rectangle_rec(canvas_rectangle, Color::WHITE);
         handle.draw_texture_v(&canvas_texture, canvas_position, Color::WHITE); // TODO fix tint
