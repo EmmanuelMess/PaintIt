@@ -1,0 +1,7 @@
+[package]
+name = "PaintIt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+raylib = { version = "5.0" }
