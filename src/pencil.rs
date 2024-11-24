@@ -7,20 +7,20 @@ use crate::user_state::UserState;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct PencilState {
-    last_frame_mouse_position_in_canvas: Option<Vector2>,
+    old_mouse_position_in_canvas: Option<Vector2>,
     mouse_position_in_canvas: Option<Vector2>,
     color: Color,
 }
 
 impl UpdateExecuteAction for PencilState {
     fn update_pressed(&mut self, user_state: UserState) {
-        self.last_frame_mouse_position_in_canvas = self.mouse_position_in_canvas;
+        self.old_mouse_position_in_canvas = self.mouse_position_in_canvas;
         self.mouse_position_in_canvas = Option::from(user_state.to_canvas(user_state.mouse_position));
         self.color = user_state.current_colors[0];
     }
 
     fn update_unpressed(&mut self, user_state: UserState) {
-        self.last_frame_mouse_position_in_canvas = None;
+        self.old_mouse_position_in_canvas = None;
         self.mouse_position_in_canvas = None;
         self.color = user_state.current_colors[0];
     }
@@ -28,17 +28,17 @@ impl UpdateExecuteAction for PencilState {
     fn update_after_draw(&mut self, _: UserState) {}
 
     fn draw(&self, image: &mut Image) -> bool {
-        match (self.last_frame_mouse_position_in_canvas, self.mouse_position_in_canvas) {
+        match (self.old_mouse_position_in_canvas, self.mouse_position_in_canvas) {
             (None, None) => {
                 // Nothing
                 false
             }
-            (None, Some(mousePositionInCanvas)) => {
-                image.draw_pixel_v(mousePositionInCanvas, self.color);
+            (None, Some(mouse_position_in_canvas)) => {
+                image.draw_pixel_v(mouse_position_in_canvas, self.color);
                 true
             }
-            (Some(lastFrameMousePositionInCanvas), Some(mousePositionInCanvas)) => {
-                image.draw_line_v(lastFrameMousePositionInCanvas, mousePositionInCanvas,
+            (Some(old_frame_mouse_position_in_canvas), Some(mouse_position_in_canvas)) => {
+                image.draw_line_v(old_frame_mouse_position_in_canvas, mouse_position_in_canvas,
                                   self.color);
                 true
             }

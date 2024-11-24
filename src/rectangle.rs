@@ -15,13 +15,11 @@ pub struct RectangleState {
 
 impl UpdateExecuteAction for RectangleState {
     fn update_pressed(&mut self, user_state: UserState) {
-        print!("{:?}, {:?}",  self.start,  self.end);
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
         } else {
             self.end = Option::from(user_state.to_canvas(user_state.mouse_position));
         }
-        println!(" {:?}, {:?}",  self.start,  self.end);
 
         self.color = user_state.current_colors[0];
     }
