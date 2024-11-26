@@ -1,4 +1,3 @@
-use std::path::absolute;
 use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::math::Vector2;
@@ -7,36 +6,78 @@ use crate::update_execute_action::UpdateExecuteAction;
 use crate::user_state::UserState;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
-pub enum EraserSize {
+pub enum BrushSize {
+    One,
     #[default]
-    SizeOne,
-    SizeTwo,
-    SizeThree,
-    SizeFour,
+    Two,
+    Three,
 }
 
-impl EraserSize {
+impl BrushSize {
     fn width(self) -> f32 {
         match self {
-            EraserSize::SizeOne => 8f32,
-            EraserSize::SizeTwo => 16f32,
-            EraserSize::SizeThree => 32f32,
-            EraserSize::SizeFour => 64f32,
+            BrushSize::One => 4f32,
+            BrushSize::Two => 8f32,
+            BrushSize::Three => 16f32,
         }
     }
 }
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
-pub struct EraserState {
-    old_mouse_position_in_canvas: Option<Vector2>,
-    mouse_position_in_canvas: Option<Vector2>,
-    size: EraserSize,
+pub enum BrushType {
+    #[default]
+    Circle,
+    Square,
+    ForwardLine,
+    BackwardLine,
 }
 
-impl UpdateExecuteAction for EraserState {
+#[derive(Debug, PartialEq, Copy, Clone, Default)]
+pub struct BrushState {
+    old_mouse_position_in_canvas: Option<Vector2>,
+    mouse_position_in_canvas: Option<Vector2>,
+    color: Color,
+    size: BrushSize,
+    brush_type: BrushType,
+}
+
+impl BrushState {
+    fn draw_shape(self, image: &mut Image, position: Vector2) {
+        match self.brush_type {
+            BrushType::Circle => {
+                image.draw_circle(
+                    position.x as i32,
+                    position.y as i32,
+                    (self.size.width() / 2f32) as i32,
+                    self.color
+                );
+            }
+            BrushType::Square => {
+                image.draw_rectangle(
+                    (position.x - self.size.width()/2f32) as i32,
+                    (position.y - self.size.width()/2f32) as i32,
+                    self.size.width() as i32,
+                    self.size.width() as i32,
+                    self.color
+                );
+            }
+            BrushType::ForwardLine => {
+                panic!("Forward line not implemented!");
+            }
+            BrushType::BackwardLine => {
+                panic!("Backward line not implemented!");
+            }
+        }
+    }
+}
+
+impl UpdateExecuteAction for BrushState {
     fn update_pressed(&mut self, user_state: UserState) {
         self.old_mouse_position_in_canvas = self.mouse_position_in_canvas;
         self.mouse_position_in_canvas = Option::from(user_state.to_canvas(user_state.mouse_position));
+        self.size = user_state.brush_size;
+        self.brush_type = user_state.brush_type;
+        self.color = user_state.current_colors[0];
     }
 
     fn update_unpressed(&mut self, user_state: UserState) {
@@ -47,21 +88,13 @@ impl UpdateExecuteAction for EraserState {
     fn update_after_draw(&mut self, _: UserState) {}
 
     fn draw(&self, image: &mut Image) -> bool {
-        let color = Color::new(0,0,0,0);
-
         match (self.old_mouse_position_in_canvas, self.mouse_position_in_canvas) {
             (None, None) => {
                 // Nothing
                 false
             }
             (None, Some(mouse_position_in_canvas)) => {
-                image.draw_rectangle(
-                    (mouse_position_in_canvas.x - self.size.width()/2f32) as i32,
-                    (mouse_position_in_canvas.y - self.size.width()/2f32) as i32,
-                    self.size.width() as i32,
-                    self.size.width() as i32,
-                    color
-                );
+                self.draw_shape(image, mouse_position_in_canvas);
                 true
             }
             (Some(old_frame_mouse_position_in_canvas), Some(mouse_position_in_canvas)) => {
@@ -81,13 +114,7 @@ impl UpdateExecuteAction for EraserState {
                 let mut e2 = 0f32;
 
                 loop {
-                    image.draw_rectangle(
-                        (x0 - self.size.width()/2f32) as i32,
-                        (y0 - self.size.width()/2f32) as i32,
-                        self.size.width() as i32,
-                        self.size.width() as i32,
-                        color
-                    );
+                    self.draw_shape(image, Vector2 { x:x0, y:y0 });
 
                     if x0 == x1 && y0 == y1 {
                         break;
@@ -103,9 +130,6 @@ impl UpdateExecuteAction for EraserState {
                         y0 += sy;
                     }
                 }
-
-                image.draw_line_v(old_frame_mouse_position_in_canvas, mouse_position_in_canvas,
-                                  color);
                 true
             }
             (Some(_), None) => { panic!("Older position is newer than new position!"); }

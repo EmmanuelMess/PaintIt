@@ -1,3 +1,4 @@
+use crate::brush::BrushState;
 use crate::eraser::EraserState;
 use crate::line::LineState;
 use crate::pencil::PencilState;
@@ -13,7 +14,7 @@ pub enum ActionState {
     ColorPicker,
     Magnifier,
     Pencil(PencilState),
-    Bucket,
+    Brush(BrushState),
     Spray(SprayState),
     InsertText,
     Line(LineState),
@@ -35,7 +36,7 @@ macro_rules! specify_state {
             ActionState::ColorPicker => panic!("State not found"),
             ActionState::Magnifier => panic!("State not found"),
             ActionState::Pencil(ref mut $state) => $expr,
-            ActionState::Bucket => panic!("State not found"),
+            ActionState::Brush(ref mut $state) => $expr,
             ActionState::Spray(ref mut $state) => $expr,
             ActionState::InsertText => panic!("State not found"),
             ActionState::Line(ref mut $state) => $expr,
@@ -58,7 +59,7 @@ impl Into<u32> for ActionState {
             ActionState::ColorPicker => 4,
             ActionState::Magnifier => 5,
             ActionState::Pencil(_) => 6,
-            ActionState::Bucket => 7,
+            ActionState::Brush(_) => 7,
             ActionState::Spray(_) => 8,
             ActionState::InsertText => 9,
             ActionState::Line(_) => 10,
@@ -83,7 +84,7 @@ impl TryFrom<u32> for ActionState {
             4 => Ok(ActionState::ColorPicker),
             5 => Ok(ActionState::Magnifier),
             6 => Ok(ActionState::Pencil(Default::default())),
-            7 => Ok(ActionState::Bucket),
+            7 => Ok(ActionState::Brush(Default::default())),
             8 => Ok(ActionState::Spray(Default::default())),
             9 => Ok(ActionState::InsertText),
             10 => Ok(ActionState::Line(Default::default())),

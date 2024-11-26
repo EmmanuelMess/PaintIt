@@ -6,9 +6,11 @@ mod update_execute_action;
 mod user_state;
 mod spray;
 mod eraser;
+mod brush;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;
+use crate::brush::{BrushSize, BrushState, BrushType};
 use crate::spray::SpraySize;
 use crate::update_execute_action::UpdateExecuteAction;
 use crate::user_state::UserState;
@@ -69,6 +71,8 @@ fn main() {
             current_colors,
             canvas_position,
             spray_size: SpraySize::SizeOne,
+            brush_size: BrushSize::Two,
+            brush_type: BrushType::Circle,
         };
 
         for i in 0..TEXTURE_NUMBER {
