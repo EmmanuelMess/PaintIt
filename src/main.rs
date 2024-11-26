@@ -7,6 +7,7 @@ mod user_state;
 mod spray;
 mod eraser;
 mod brush;
+mod bucket;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;
@@ -86,7 +87,10 @@ fn main() {
             }
         }
 
-        let canvas_rectangle = Rectangle { x: canvas_position.x, y: canvas_position.y, width: canvas_image.width as f32, height: canvas_image.height as f32 };
+        let canvas_rectangle = Rectangle {
+            x: canvas_position.x, y: canvas_position.y,
+            width: canvas_image.width as f32, height: canvas_image.height as f32
+        };
         let mouse_in_canvas = canvas_rectangle.check_collision_point_rec(mouse_position);
         let canvas_pressed = mouse_in_canvas
             && rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT);
