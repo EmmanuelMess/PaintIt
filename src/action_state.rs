@@ -1,3 +1,4 @@
+use crate::eraser::EraserState;
 use crate::line::LineState;
 use crate::pencil::PencilState;
 use crate::rectangle::RectangleState;
@@ -7,7 +8,7 @@ use crate::spray::SprayState;
 pub enum ActionState {
     FreeFormSelect,
     Select,
-    Eraser,
+    Eraser(EraserState),
     PaintBucket,
     ColorPicker,
     Magnifier,
@@ -29,7 +30,7 @@ macro_rules! specify_state {
         match $action {
             ActionState::FreeFormSelect => panic!("State not found"),
             ActionState::Select => panic!("State not found"),
-            ActionState::Eraser => panic!("State not found"),
+            ActionState::Eraser($state) => $expr,
             ActionState::PaintBucket => panic!("State not found"),
             ActionState::ColorPicker => panic!("State not found"),
             ActionState::Magnifier => panic!("State not found"),
@@ -52,7 +53,7 @@ impl Into<u32> for ActionState {
         match self {
             ActionState::FreeFormSelect => 0,
             ActionState::Select => 1,
-            ActionState::Eraser => 2,
+            ActionState::Eraser(_) => 2,
             ActionState::PaintBucket => 3,
             ActionState::ColorPicker => 4,
             ActionState::Magnifier => 5,
@@ -77,7 +78,7 @@ impl TryFrom<u32> for ActionState {
         match value {
             0 => Ok(ActionState::FreeFormSelect),
             1 => Ok(ActionState::Select),
-            2 => Ok(ActionState::Eraser),
+            2 => Ok(ActionState::Eraser(Default::default())),
             3 => Ok(ActionState::PaintBucket),
             4 => Ok(ActionState::ColorPicker),
             5 => Ok(ActionState::Magnifier),

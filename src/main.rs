@@ -5,6 +5,7 @@ mod pencil;
 mod update_execute_action;
 mod user_state;
 mod spray;
+mod eraser;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;
