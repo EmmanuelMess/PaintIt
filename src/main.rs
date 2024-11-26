@@ -4,9 +4,11 @@ mod rectangle;
 mod pencil;
 mod update_execute_action;
 mod user_state;
+mod spray;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;
+use crate::spray::SpraySize;
 use crate::update_execute_action::UpdateExecuteAction;
 use crate::user_state::UserState;
 
@@ -65,6 +67,7 @@ fn main() {
             mouse_position,
             current_colors,
             canvas_position,
+            spray_size: SpraySize::SizeOne,
         };
 
         for i in 0..TEXTURE_NUMBER {
