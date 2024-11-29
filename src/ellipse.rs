@@ -47,10 +47,10 @@ impl UpdateExecuteAction for EllipseState {
         let p0 = self.start.unwrap();
         let p1 = self.end.unwrap();
 
-        let middle = (p0 + p1)/2f32;
+        let middle = (p0 + p1) / 2.0;
 
-        let a = (p0.x - p1.x).abs();
-        let b = (p0.y - p1.y).abs();
+        let a = (p0.x - p1.x).abs() / 2.0;
+        let b = (p0.y - p1.y).abs() / 2.0;
 
         let mut t = 0f32;
         while t < TAU {
@@ -65,26 +65,26 @@ impl UpdateExecuteAction for EllipseState {
     }
 
     fn draw_state(&self, handle: &mut RaylibDrawHandle, user_state: UserState) {
-        if !(self.start != None && self.end != None) {
-            return;
-        }
+        if let Some(start) = self.start {
+            if let Some(end) = self.end {
+                let p0 = user_state.to_window(start);
+                let p1 = user_state.to_window(end);
 
-        let p0 = user_state.to_window(self.start.unwrap());
-        let p1 = user_state.to_window(self.end.unwrap());
+                let middle = (p0 + p1) / 2.0;
 
-        let middle = (p0 + p1)/2f32;
+                let a = (p0.x - p1.x).abs() / 2.0;
+                let b = (p0.y - p1.y).abs() / 2.0;
 
-        let a = (p0.x - p1.x).abs();
-        let b = (p0.y - p1.y).abs();
+                let mut t = 0f32;
+                while t < TAU {
+                    let px = middle.x + a * f32::cos(t);
+                    let py = middle.y + b * f32::sin(t);
 
-        let mut t = 0f32;
-        while t < TAU {
-            let px = middle.x + a * f32::cos(t);
-            let py = middle.y + b * f32::sin(t);
+                    handle.draw_pixel(px as i32, py as i32, self.color);
 
-            handle.draw_pixel(px as i32, py as i32, self.color);
-
-            t += 0.001;
+                    t += 0.001;
+                }
+            }
         }
     }
 
