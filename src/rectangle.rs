@@ -46,14 +46,11 @@ impl UpdateExecuteAction for RectangleState {
         let p0 = self.start.unwrap();
         let p1 = self.end.unwrap();
 
-        let start = if p0.x <= p1.x && p0.y <= p1.y { p0 } else { p1 };
-        let end = if p0.x <= p1.x && p0.y <= p1.y { p1 } else { p0 };
-
-        let size = end - start;
+        let size = p0 - p1;
 
         let rectangle = Rectangle {
-            x: start.x,
-            y: start.y,
+            x: f32::min(p0.x, p1.x),
+            y: f32::min(p0.y, p1.y),
             width: size.x.abs(),
             height: size.y.abs(),
         };
@@ -69,14 +66,11 @@ impl UpdateExecuteAction for RectangleState {
         let p0 = user_state.to_window(self.start.unwrap());
         let p1 = user_state.to_window(self.end.unwrap());
 
-        let start = if p0.x <= p1.x && p0.y <= p1.y { p0 } else { p1 };
-        let end = if p0.x <= p1.x && p0.y <= p1.y { p1 } else { p0 };
-
-        let size = end - start;
+        let size = p0 - p1;
 
         let rectangle = Rectangle {
-            x: start.x,
-            y: start.y,
+            x: f32::min(p0.x, p1.x),
+            y: f32::min(p0.y, p1.y),
             width: size.x.abs(),
             height: size.y.abs(),
         };
