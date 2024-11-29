@@ -27,7 +27,7 @@ impl UpdateExecuteAction for PencilState {
 
     fn update_after_draw(&mut self, _: UserState) {}
 
-    fn draw(&self, image: &mut Image) -> bool {
+    fn draw(&mut self, image: &mut Image) -> bool {
         match (self.old_mouse_position_in_canvas, self.mouse_position_in_canvas) {
             (None, None) => {
                 // Nothing
@@ -47,4 +47,8 @@ impl UpdateExecuteAction for PencilState {
     }
 
     fn draw_state(&self, _: &mut RaylibDrawHandle, _: UserState) {}
+
+    fn get_color(&self) -> Option<Color> {
+        None
+    }
 }

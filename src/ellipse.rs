@@ -39,7 +39,7 @@ impl UpdateExecuteAction for EllipseState {
         }
     }
 
-    fn draw(&self, image: &mut Image) -> bool {
+    fn draw(&mut self, image: &mut Image) -> bool {
         if !self.draw_now {
             return false;
         }
@@ -86,5 +86,9 @@ impl UpdateExecuteAction for EllipseState {
 
             t += 0.001;
         }
+    }
+
+    fn get_color(&self) -> Option<Color> {
+        None
     }
 }

@@ -1,12 +1,10 @@
-use std::f32::consts::TAU;
-use raylib::color::Color;
-use raylib::consts::PI;
-use raylib::drawing::RaylibDrawHandle;
-use raylib::math;
-use raylib::math::Vector2;
-use raylib::prelude::Image;
 use crate::update_execute_action::UpdateExecuteAction;
 use crate::user_state::UserState;
+use raylib::color::Color;
+use raylib::drawing::RaylibDrawHandle;
+use raylib::math::Vector2;
+use raylib::prelude::Image;
+use std::f32::consts::TAU;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum SpraySize {
@@ -45,7 +43,7 @@ impl UpdateExecuteAction for SprayState {
 
     fn update_after_draw(&mut self, _: UserState) {}
 
-    fn draw(&self, image: &mut Image) -> bool {
+    fn draw(&mut self, image: &mut Image) -> bool {
         match self.mouse_position_in_canvas {
             Some(mouse_position_in_canvas) => {
                 let theta = rand::random::<f32>() * TAU;
@@ -63,4 +61,8 @@ impl UpdateExecuteAction for SprayState {
     }
 
     fn draw_state(&self, _: &mut RaylibDrawHandle, _: UserState) {}
+
+    fn get_color(&self) -> Option<Color> {
+        None
+    }
 }

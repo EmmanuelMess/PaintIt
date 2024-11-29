@@ -37,7 +37,7 @@ impl UpdateExecuteAction for LineState {
         }
     }
 
-    fn draw(&self, image: &mut Image) -> bool {
+    fn draw(&mut self, image: &mut Image) -> bool {
         if self.draw_now {
             image.draw_line_v(self.start.unwrap(), self.end.unwrap(), self.color);
             return true;
@@ -55,5 +55,9 @@ impl UpdateExecuteAction for LineState {
         let p1 = user_state.to_window(self.end.unwrap());
 
         handle.draw_line_v(p0, p1, self.color);
+    }
+
+    fn get_color(&self) -> Option<Color> {
+        None
     }
 }

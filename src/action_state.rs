@@ -1,5 +1,6 @@
 use crate::brush::BrushState;
 use crate::bucket::BucketState;
+use crate::color_picker::ColorPickerState;
 use crate::ellipse::EllipseState;
 use crate::eraser::EraserState;
 use crate::line::LineState;
@@ -13,7 +14,7 @@ pub enum ActionState {
     Select,
     Eraser(EraserState),
     PaintBucket(BucketState),
-    ColorPicker,
+    ColorPicker(ColorPickerState),
     Magnifier,
     Pencil(PencilState),
     Brush(BrushState),
@@ -35,7 +36,7 @@ macro_rules! specify_state {
             ActionState::Select => panic!("State not found"),
             ActionState::Eraser($state) => $expr,
             ActionState::PaintBucket(ref mut $state) => $expr,
-            ActionState::ColorPicker => panic!("State not found"),
+            ActionState::ColorPicker(ref mut $state) => $expr,
             ActionState::Magnifier => panic!("State not found"),
             ActionState::Pencil(ref mut $state) => $expr,
             ActionState::Brush(ref mut $state) => $expr,
@@ -58,7 +59,7 @@ impl Into<u32> for ActionState {
             ActionState::Select => 1,
             ActionState::Eraser(_) => 2,
             ActionState::PaintBucket(_) => 3,
-            ActionState::ColorPicker => 4,
+            ActionState::ColorPicker(_) => 4,
             ActionState::Magnifier => 5,
             ActionState::Pencil(_) => 6,
             ActionState::Brush(_) => 7,
@@ -83,7 +84,7 @@ impl TryFrom<u32> for ActionState {
             1 => Ok(ActionState::Select),
             2 => Ok(ActionState::Eraser(Default::default())),
             3 => Ok(ActionState::PaintBucket(Default::default())),
-            4 => Ok(ActionState::ColorPicker),
+            4 => Ok(ActionState::ColorPicker(Default::default())),
             5 => Ok(ActionState::Magnifier),
             6 => Ok(ActionState::Pencil(Default::default())),
             7 => Ok(ActionState::Brush(Default::default())),

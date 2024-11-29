@@ -38,7 +38,7 @@ impl UpdateExecuteAction for RectangleState {
         }
     }
 
-    fn draw(&self, image: &mut Image) -> bool {
+    fn draw(&mut self, image: &mut Image) -> bool {
         if !(self.draw_now) {
             return false;
         }
@@ -81,5 +81,9 @@ impl UpdateExecuteAction for RectangleState {
             height: size.y.abs(),
         };
         handle.draw_rectangle_lines_ex(rectangle, 1f32, self.color);
+    }
+
+    fn get_color(&self) -> Option<Color> {
+        None
     }
 }

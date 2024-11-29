@@ -9,6 +9,7 @@ mod eraser;
 mod brush;
 mod bucket;
 mod ellipse;
+mod color_picker;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;
@@ -96,6 +97,7 @@ fn main() {
         let canvas_pressed = mouse_in_canvas
             && rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT);
 
+        //TODO change to previous tool after color picker
         match current_pressed {
             Some(ref mut generic_state) => {
                 specify_state!(generic_state, specific_state, {
@@ -109,6 +111,9 @@ fn main() {
                     if canvas_dirty {
                         println!("{:?}", specific_state);
                         specific_state.update_after_draw(user_state);
+                    }
+                    if let Some(color) =  specific_state.get_color() {
+                        current_colors[0] = color;
                     }
                 });
             }

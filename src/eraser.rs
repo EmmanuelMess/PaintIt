@@ -46,7 +46,7 @@ impl UpdateExecuteAction for EraserState {
 
     fn update_after_draw(&mut self, _: UserState) {}
 
-    fn draw(&self, image: &mut Image) -> bool {
+    fn draw(&mut self, image: &mut Image) -> bool {
         let color = Color::new(0,0,0,0);
 
         match (self.old_mouse_position_in_canvas, self.mouse_position_in_canvas) {
@@ -110,4 +110,8 @@ impl UpdateExecuteAction for EraserState {
     }
 
     fn draw_state(&self, _: &mut RaylibDrawHandle, _: UserState) {}
+
+    fn get_color(&self) -> Option<Color> {
+        None
+    }
 }
