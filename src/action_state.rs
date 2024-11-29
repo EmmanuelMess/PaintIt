@@ -1,5 +1,6 @@
 use crate::brush::BrushState;
 use crate::bucket::BucketState;
+use crate::ellipse::EllipseState;
 use crate::eraser::EraserState;
 use crate::line::LineState;
 use crate::pencil::PencilState;
@@ -22,7 +23,7 @@ pub enum ActionState {
     Curve,
     Rectangle(RectangleState),
     Polygon,
-    Ellipse,
+    Ellipse(EllipseState),
     RoundedRectangle,
 }
 
@@ -44,7 +45,7 @@ macro_rules! specify_state {
             ActionState::Curve => panic!("State not found"),
             ActionState::Rectangle(ref mut $state) => $expr,
             ActionState::Polygon => panic!("State not found"),
-            ActionState::Ellipse => panic!("State not found"),
+            ActionState::Ellipse(ref mut $state) => $expr,
             ActionState::RoundedRectangle => panic!("State not found"),
         }
     };
@@ -67,7 +68,7 @@ impl Into<u32> for ActionState {
             ActionState::Curve => 11,
             ActionState::Rectangle(_) => 12,
             ActionState::Polygon => 13,
-            ActionState::Ellipse => 14,
+            ActionState::Ellipse(_) => 14,
             ActionState::RoundedRectangle => 15
         }
     }
@@ -92,7 +93,7 @@ impl TryFrom<u32> for ActionState {
             11 => Ok(ActionState::Curve),
             12 => Ok(ActionState::Rectangle(Default::default())),
             13 => Ok(ActionState::Polygon),
-            14 => Ok(ActionState::Ellipse),
+            14 => Ok(ActionState::Ellipse(Default::default())),
             15 => Ok(ActionState::RoundedRectangle),
             _ => Err(()),
         }

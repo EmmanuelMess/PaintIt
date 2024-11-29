@@ -8,6 +8,7 @@ mod spray;
 mod eraser;
 mod brush;
 mod bucket;
+mod ellipse;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;

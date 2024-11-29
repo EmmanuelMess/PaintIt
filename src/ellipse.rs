@@ -1,3 +1,4 @@
+use std::f32::consts::TAU;
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
 use raylib::math::{Rectangle, Vector2};
@@ -6,14 +7,14 @@ use crate::update_execute_action::UpdateExecuteAction;
 use crate::user_state::UserState;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
-pub struct RectangleState {
+pub struct EllipseState {
     start: Option<Vector2>,
     end: Option<Vector2>,
     draw_now: bool,
     color: Color,
 }
 
-impl UpdateExecuteAction for RectangleState {
+impl UpdateExecuteAction for EllipseState {
     fn update_pressed(&mut self, user_state: UserState) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
@@ -39,25 +40,27 @@ impl UpdateExecuteAction for RectangleState {
     }
 
     fn draw(&self, image: &mut Image) -> bool {
-        if !(self.draw_now) {
+        if !self.draw_now {
             return false;
         }
 
         let p0 = self.start.unwrap();
         let p1 = self.end.unwrap();
 
-        let start = if p0.x <= p1.x && p0.y <= p1.y { p0 } else { p1 };
-        let end = if p0.x <= p1.x && p0.y <= p1.y { p1 } else { p0 };
+        let middle = (p0 + p1)/2f32;
 
-        let size = end - start;
+        let a = (p0.x - p1.x).abs();
+        let b = (p0.y - p1.y).abs();
 
-        let rectangle = Rectangle {
-            x: start.x,
-            y: start.y,
-            width: size.x.abs(),
-            height: size.y.abs(),
-        };
-        image.draw_rectangle_lines(rectangle, 1, self.color);
+        let mut t = 0f32;
+        while t < TAU {
+            let px = middle.x + a * f32::cos(t);
+            let py = middle.y + b * f32::sin(t);
+
+            image.draw_pixel(px as i32, py as i32, self.color);
+
+            t += 0.001;
+        }
         true
     }
 
@@ -69,17 +72,19 @@ impl UpdateExecuteAction for RectangleState {
         let p0 = user_state.to_window(self.start.unwrap());
         let p1 = user_state.to_window(self.end.unwrap());
 
-        let start = if p0.x <= p1.x && p0.y <= p1.y { p0 } else { p1 };
-        let end = if p0.x <= p1.x && p0.y <= p1.y { p1 } else { p0 };
+        let middle = (p0 + p1)/2f32;
 
-        let size = end - start;
+        let a = (p0.x - p1.x).abs();
+        let b = (p0.y - p1.y).abs();
 
-        let rectangle = Rectangle {
-            x: start.x,
-            y: start.y,
-            width: size.x.abs(),
-            height: size.y.abs(),
-        };
-        handle.draw_rectangle_lines_ex(rectangle, 1f32, self.color);
+        let mut t = 0f32;
+        while t < TAU {
+            let px = middle.x + a * f32::cos(t);
+            let py = middle.y + b * f32::sin(t);
+
+            handle.draw_pixel(px as i32, py as i32, self.color);
+
+            t += 0.001;
+        }
     }
 }
