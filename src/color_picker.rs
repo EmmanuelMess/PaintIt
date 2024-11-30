@@ -1,10 +1,9 @@
-use std::path::absolute;
+use crate::update_execute_action::UpdateExecuteAction;
+use crate::user_state::UserState;
 use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::math::Vector2;
 use raylib::prelude::Image;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct ColorPickerState {

@@ -1,10 +1,9 @@
-use std::path::absolute;
+use crate::update_execute_action::UpdateExecuteAction;
+use crate::user_state::UserState;
 use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::math::Vector2;
 use raylib::prelude::Image;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub enum EraserSize {
@@ -39,7 +38,7 @@ impl UpdateExecuteAction for EraserState {
         self.mouse_position_in_canvas = Option::from(user_state.to_canvas(user_state.mouse_position));
     }
 
-    fn update_unpressed(&mut self, user_state: UserState) {
+    fn update_unpressed(&mut self, _: UserState) {
         self.old_mouse_position_in_canvas = None;
         self.mouse_position_in_canvas = None;
     }
@@ -78,7 +77,6 @@ impl UpdateExecuteAction for EraserState {
                 let sy = if y0 < y1 { 1f32 } else { -1f32 };
 
                 let mut err = if dx>dy { dx/2f32 } else { -dy/2f32 };
-                let mut e2 = 0f32;
 
                 loop {
                     image.draw_rectangle(
@@ -93,7 +91,7 @@ impl UpdateExecuteAction for EraserState {
                         break;
                     }
 
-                    e2 = err;
+                    let e2 = err;
                     if e2 > -dx {
                         err -= dy;
                         x0 += sx;

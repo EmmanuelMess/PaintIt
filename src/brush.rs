@@ -80,7 +80,7 @@ impl UpdateExecuteAction for BrushState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, user_state: UserState) {
+    fn update_unpressed(&mut self, _: UserState) {
         self.old_mouse_position_in_canvas = None;
         self.mouse_position_in_canvas = None;
     }
@@ -111,7 +111,6 @@ impl UpdateExecuteAction for BrushState {
                 let sy = if y0 < y1 { 1f32 } else { -1f32 };
 
                 let mut err = if dx>dy { dx/2f32 } else { -dy/2f32 };
-                let mut e2 = 0f32;
 
                 loop {
                     self.draw_shape(image, Vector2 { x:x0, y:y0 });
@@ -120,7 +119,7 @@ impl UpdateExecuteAction for BrushState {
                         break;
                     }
 
-                    e2 = err;
+                    let e2 = err;
                     if e2 > -dx {
                         err -= dy;
                         x0 += sx;

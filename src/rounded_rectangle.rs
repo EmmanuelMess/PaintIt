@@ -26,55 +26,54 @@ macro_rules! draw_rounded_rectangle {
         };
 
         let segments = 10;
-        let lineThick = 1.0;
-        let roundness = 0.1;
-        let stepLength = (TAU / 4.0)/(segments as f32);
+        let line_thick = 1.0;
+        let step_length = (TAU / 4.0)/(segments as f32);
         let radius = f32::min(10.0, f32::min(r.height/2.0, r.width/2.0));
-        let outerRadius = radius + lineThick;
-        let innerRadius = radius;
+        let outer_radius = radius + line_thick;
+        let inner_radius = radius;
         let angles: [f32; 4] = [TAU / 2.0, TAU / 4.0 * 3.0, 0.0, TAU / 4.0];
         let point: [Vector2; 16] = [
-            Vector2::new(r.x + innerRadius, r.y - lineThick),
-            Vector2::new((r.x + r.width) - innerRadius, r.y - lineThick),
-            Vector2::new( r.x + r.width + lineThick, r.y + innerRadius ),
-            Vector2::new(r.x + r.width + lineThick, (r.y + r.height) - innerRadius),
-            Vector2::new((r.x + r.width) - innerRadius, r.y + r.height + lineThick),
-            Vector2::new(r.x + innerRadius, r.y + r.height + lineThick),
-            Vector2::new( r.x - lineThick, (r.y + r.height) - innerRadius),
-            Vector2::new(r.x - lineThick, r.y + innerRadius),
-            Vector2::new(r.x + innerRadius, r.y),
-            Vector2::new((r.x + r.width) - innerRadius, r.y),
-            Vector2::new( r.x + r.width, r.y + innerRadius ),
-            Vector2::new(r.x + r.width, (r.y + r.height) - innerRadius),
-            Vector2::new((r.x + r.width) - innerRadius, r.y + r.height),
-            Vector2::new(r.x + innerRadius, r.y + r.height),
-            Vector2::new(r.x, (r.y + r.height) - innerRadius),
-            Vector2::new(r.x, r.y + innerRadius),
+            Vector2::new(r.x + inner_radius, r.y - line_thick),
+            Vector2::new((r.x + r.width) - inner_radius, r.y - line_thick),
+            Vector2::new( r.x + r.width + line_thick, r.y + inner_radius ),
+            Vector2::new(r.x + r.width + line_thick, (r.y + r.height) - inner_radius),
+            Vector2::new((r.x + r.width) - inner_radius, r.y + r.height + line_thick),
+            Vector2::new(r.x + inner_radius, r.y + r.height + line_thick),
+            Vector2::new( r.x - line_thick, (r.y + r.height) - inner_radius),
+            Vector2::new(r.x - line_thick, r.y + inner_radius),
+            Vector2::new(r.x + inner_radius, r.y),
+            Vector2::new((r.x + r.width) - inner_radius, r.y),
+            Vector2::new( r.x + r.width, r.y + inner_radius ),
+            Vector2::new(r.x + r.width, (r.y + r.height) - inner_radius),
+            Vector2::new((r.x + r.width) - inner_radius, r.y + r.height),
+            Vector2::new(r.x + inner_radius, r.y + r.height),
+            Vector2::new(r.x, (r.y + r.height) - inner_radius),
+            Vector2::new(r.x, r.y + inner_radius),
         ];
         let centers: [Vector2; 4] = [
-            Vector2::new(r.x + innerRadius, r.y + innerRadius),
-            Vector2::new((r.x + r.width) - innerRadius, r.y + innerRadius),
-            Vector2::new((r.x + r.width) - innerRadius, (r.y + r.height) - innerRadius),
-            Vector2::new(r.x + innerRadius, (r.y + r.height) - innerRadius),
+            Vector2::new(r.x + inner_radius, r.y + inner_radius),
+            Vector2::new((r.x + r.width) - inner_radius, r.y + inner_radius),
+            Vector2::new((r.x + r.width) - inner_radius, (r.y + r.height) - inner_radius),
+            Vector2::new(r.x + inner_radius, (r.y + r.height) - inner_radius),
         ];
 
         for k in 0..4 {
             let mut angle = angles[k];
             let center = centers[k];
 
-            for i in 0..segments {
+            for _ in 0..segments {
                 $base.draw_line_v(
                     Vector2::new(
-                        center.x + f32::cos(angle)*outerRadius,
-                        center.y + f32::sin(angle)*outerRadius
+                        center.x + f32::cos(angle)*outer_radius,
+                        center.y + f32::sin(angle)*outer_radius
                     ),
                     Vector2::new(
-                        center.x + f32::cos(angle + stepLength)*outerRadius,
-                        center.y + f32::sin(angle + stepLength)*outerRadius
+                        center.x + f32::cos(angle + step_length)*outer_radius,
+                        center.y + f32::sin(angle + step_length)*outer_radius
                     ),
                     $color,
                 );
-                angle += stepLength;
+                angle += step_length;
             }
         }
 

@@ -1,6 +1,6 @@
 use raylib::prelude::*;
 use PaintIt::action_state::ActionState;
-use PaintIt::brush::{BrushSize, BrushState, BrushType};
+use PaintIt::brush::{BrushSize, BrushType};
 use PaintIt::specify_state;
 use PaintIt::spray::SpraySize;
 use PaintIt::update_execute_action::UpdateExecuteAction;
@@ -48,7 +48,7 @@ fn main() {
     let mut current_pressed: Option<ActionState> = None;
     let mut current_colors: [Color; 2] = [Color::BLACK, Color::WHITE];
 
-    let mut canvas_position = Vector2 { x: (BUTTON_SIZE * 2) as f32 + CANVAS_MARGIN, y: CANVAS_MARGIN };
+    let canvas_position = Vector2 { x: (BUTTON_SIZE * 2) as f32 + CANVAS_MARGIN, y: CANVAS_MARGIN };
     let mut canvas_image = Image::gen_image_color(743, 406, TRANSPARENT);
 
     let mut canvas_dirty = false;

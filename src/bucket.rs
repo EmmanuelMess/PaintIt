@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::hash::Hash;
 use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::math::Vector2;
