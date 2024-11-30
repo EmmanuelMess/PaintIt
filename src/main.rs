@@ -86,9 +86,8 @@ fn main() {
             && rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT);
 
         //TODO change to previous tool after color picker
-        match current_pressed {
-            Some(ref mut generic_state) => {
-                specify_state!(generic_state, specific_state, {
+        if let Some(generic_state) = current_pressed.as_deref_mut() {
+            specify_state!(generic_state, specific_state, {
                     if canvas_pressed {
                         specific_state.update_pressed(user_state);
                     } else {
@@ -103,11 +102,8 @@ fn main() {
                     if let Some(color) =  specific_state.get_color() {
                         current_colors[0] = color;
                     }
-                });
-            }
-            _ => {}
+             });
         }
-
 
         if canvas_dirty {
             canvas_texture = rl.load_texture_from_image(&thread, &canvas_image).unwrap();
@@ -125,7 +121,7 @@ fn main() {
         for i in 0..TEXTURE_NUMBER {
             let position = Vector2 { x: button_positions[i].x + 8f32, y: button_positions[i].y + 8f32 };
 
-            if current_pressed.is_some_and(|b|  <ActionState as Into<u32>>::into(b) == (i as u32)) {
+            if current_pressed.as_ref().is_some_and(|b|  u32::from(b) == (i as u32)) {
                 // Draw the pressed button
                 handle.draw_texture_rec(&textures, atlas_sources[i], position, Color::WHITE);
             } else {
@@ -155,13 +151,10 @@ fn main() {
         handle.draw_rectangle_rec(canvas_rectangle, Color::WHITE);
         handle.draw_texture_v(&canvas_texture, canvas_position, Color::WHITE); // TODO fix tint
 
-        match current_pressed {
-            Some(ref mut generic_state) => {
-                specify_state!(generic_state, specific_state, {
-                    specific_state.draw_state(&mut handle, user_state);
-                });
-            }
-            _ => {}
+        if let Some(generic_state) = current_pressed.as_deref_mut() {
+            specify_state!(generic_state, specific_state, {
+                specific_state.draw_state(&mut handle, user_state);
+            });
         }
 
         if mouse_in_canvas {

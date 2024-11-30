@@ -1,3 +1,4 @@
+use std::ops::{Deref, DerefMut};
 use crate::brush::BrushState;
 use crate::bucket::BucketState;
 use crate::color_picker::ColorPickerState;
@@ -5,11 +6,12 @@ use crate::ellipse::EllipseState;
 use crate::eraser::EraserState;
 use crate::line::LineState;
 use crate::pencil::PencilState;
+use crate::polygon::PolygonState;
 use crate::rectangle::RectangleState;
 use crate::rounded_rectangle::RoundedRectangleState;
 use crate::spray::SprayState;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum ActionState {
     FreeFormSelect,
     Select,
@@ -24,7 +26,7 @@ pub enum ActionState {
     Line(LineState),
     Curve,
     Rectangle(RectangleState),
-    Polygon,
+    Polygon(PolygonState),
     Ellipse(EllipseState),
     RoundedRectangle(RoundedRectangleState),
 }
@@ -46,16 +48,16 @@ macro_rules! specify_state {
             ActionState::Line(ref mut $state) => $expr,
             ActionState::Curve => panic!("State not found"),
             ActionState::Rectangle(ref mut $state) => $expr,
-            ActionState::Polygon => panic!("State not found"),
+            ActionState::Polygon(ref mut $state) => $expr,
             ActionState::Ellipse(ref mut $state) => $expr,
             ActionState::RoundedRectangle(ref mut $state) => $expr,
         }
     };
 }
 
-impl Into<u32> for ActionState {
-    fn into(self) -> u32 {
-        match self {
+impl From<&ActionState> for u32 {
+    fn from(value: &ActionState) -> u32 {
+        match value {
             ActionState::FreeFormSelect => 0,
             ActionState::Select => 1,
             ActionState::Eraser(_) => 2,
@@ -69,7 +71,7 @@ impl Into<u32> for ActionState {
             ActionState::Line(_) => 10,
             ActionState::Curve => 11,
             ActionState::Rectangle(_) => 12,
-            ActionState::Polygon => 13,
+            ActionState::Polygon(_) => 13,
             ActionState::Ellipse(_) => 14,
             ActionState::RoundedRectangle(_) => 15
         }
@@ -94,10 +96,24 @@ impl TryFrom<u32> for ActionState {
             10 => Ok(ActionState::Line(Default::default())),
             11 => Ok(ActionState::Curve),
             12 => Ok(ActionState::Rectangle(Default::default())),
-            13 => Ok(ActionState::Polygon),
+            13 => Ok(ActionState::Polygon(Default::default())),
             14 => Ok(ActionState::Ellipse(Default::default())),
             15 => Ok(ActionState::RoundedRectangle(Default::default())),
             _ => Err(()),
         }
+    }
+}
+
+impl Deref for ActionState {
+    type Target = ActionState;
+
+    fn deref(&self) -> &Self::Target {
+        &self
+    }
+}
+
+impl DerefMut for ActionState {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self
     }
 }

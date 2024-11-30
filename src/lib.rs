@@ -11,3 +11,4 @@ pub mod bucket;
 pub mod ellipse;
 pub mod color_picker;
 pub mod rounded_rectangle;
+mod polygon;
