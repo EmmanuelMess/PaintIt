@@ -3,6 +3,14 @@ name = "PaintIt"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "PaintIt"
+path = "src/lib.rs"
+
+[[bin]]
+name = "PaintIt"
+path = "src/main.rs"
+
 [dependencies]
 raylib = { version = "5.0" }
 rand = "0.9.0-alpha.2"

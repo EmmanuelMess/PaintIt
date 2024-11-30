@@ -1,23 +1,10 @@
-mod line;
-mod action_state;
-mod rectangle;
-mod pencil;
-mod update_execute_action;
-mod user_state;
-mod spray;
-mod eraser;
-mod brush;
-mod bucket;
-mod ellipse;
-mod color_picker;
-mod rounded_rectangle;
-
 use raylib::prelude::*;
-use crate::action_state::ActionState;
-use crate::brush::{BrushSize, BrushState, BrushType};
-use crate::spray::SpraySize;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
+use PaintIt::action_state::ActionState;
+use PaintIt::brush::{BrushSize, BrushState, BrushType};
+use PaintIt::specify_state;
+use PaintIt::spray::SpraySize;
+use PaintIt::update_execute_action::UpdateExecuteAction;
+use PaintIt::user_state::UserState;
 
 const TEXTURE_SIZE: usize = 16;
 const TEXTURE_NUMBER: usize = 16;
