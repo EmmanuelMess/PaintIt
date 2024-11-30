@@ -10,6 +10,7 @@ mod brush;
 mod bucket;
 mod ellipse;
 mod color_picker;
+mod rounded_rectangle;
 
 use raylib::prelude::*;
 use crate::action_state::ActionState;
