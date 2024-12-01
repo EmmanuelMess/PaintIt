@@ -1,20 +1,21 @@
+use crate::update_execute_action::UpdateExecuteAction;
+use crate::user_state::{CanvasVector2, UserState};
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
-use raylib::math::{Rectangle, Vector2};
+use raylib::math::Rectangle;
 use raylib::prelude::Image;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
+use raylib::{RaylibHandle, RaylibThread};
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct RectangleState {
-    start: Option<Vector2>,
-    end: Option<Vector2>,
+    start: Option<CanvasVector2>,
+    end: Option<CanvasVector2>,
     draw_now: bool,
     color: Color,
 }
 
 impl UpdateExecuteAction for RectangleState {
-    fn update_pressed(&mut self, user_state: UserState) {
+    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
         } else {
@@ -24,13 +25,13 @@ impl UpdateExecuteAction for RectangleState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, _: UserState) {
+    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
         if self.start != None && self.end != None {
             self.draw_now = true;
         }
     }
 
-    fn update_after_draw(&mut self, _: UserState) {
+    fn update_after_draw(&mut self, user_state: &UserState) {
         if self.draw_now {
             self.start = None;
             self.end = None;
@@ -46,11 +47,11 @@ impl UpdateExecuteAction for RectangleState {
         let p0 = self.start.unwrap();
         let p1 = self.end.unwrap();
 
-        let size = p0 - p1;
+        let size = p0.0 - p1.0;
 
         let rectangle = Rectangle {
-            x: f32::min(p0.x, p1.x),
-            y: f32::min(p0.y, p1.y),
+            x: f32::min(p0.0.x, p1.0.x),
+            y: f32::min(p0.0.y, p1.0.y),
             width: size.x.abs(),
             height: size.y.abs(),
         };
@@ -58,7 +59,7 @@ impl UpdateExecuteAction for RectangleState {
         true
     }
 
-    fn draw_state(&self, handle: &mut RaylibDrawHandle, user_state: UserState) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
         if !(self.start != None && self.end != None) {
             return;
         }
@@ -66,11 +67,11 @@ impl UpdateExecuteAction for RectangleState {
         let p0 = user_state.to_window(self.start.unwrap());
         let p1 = user_state.to_window(self.end.unwrap());
 
-        let size = p0 - p1;
+        let size = p0.0 - p1.0;
 
         let rectangle = Rectangle {
-            x: f32::min(p0.x, p1.x),
-            y: f32::min(p0.y, p1.y),
+            x: f32::min(p0.0.x, p1.0.x),
+            y: f32::min(p0.0.y, p1.0.y),
             width: size.x.abs(),
             height: size.y.abs(),
         };

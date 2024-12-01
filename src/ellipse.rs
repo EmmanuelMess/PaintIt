@@ -1,21 +1,21 @@
-use std::f32::consts::TAU;
+use crate::update_execute_action::UpdateExecuteAction;
+use crate::user_state::{CanvasVector2, UserState};
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
-use raylib::math::Vector2;
 use raylib::prelude::Image;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
+use raylib::{RaylibHandle, RaylibThread};
+use std::f32::consts::TAU;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct EllipseState {
-    start: Option<Vector2>,
-    end: Option<Vector2>,
+    start: Option<CanvasVector2>,
+    end: Option<CanvasVector2>,
     draw_now: bool,
     color: Color,
 }
 
 impl UpdateExecuteAction for EllipseState {
-    fn update_pressed(&mut self, user_state: UserState) {
+    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
         } else {
@@ -25,13 +25,13 @@ impl UpdateExecuteAction for EllipseState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, _: UserState) {
+    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
         if self.start != None && self.end != None {
             self.draw_now = true;
         }
     }
 
-    fn update_after_draw(&mut self, _: UserState) {
+    fn update_after_draw(&mut self, user_state: &UserState) {
         if self.draw_now {
             self.start = None;
             self.end = None;
@@ -44,8 +44,8 @@ impl UpdateExecuteAction for EllipseState {
             return false;
         }
 
-        let p0 = self.start.unwrap();
-        let p1 = self.end.unwrap();
+        let p0 = self.start.unwrap().0;
+        let p1 = self.end.unwrap().0;
 
         let middle = (p0 + p1) / 2.0;
 
@@ -64,11 +64,11 @@ impl UpdateExecuteAction for EllipseState {
         true
     }
 
-    fn draw_state(&self, handle: &mut RaylibDrawHandle, user_state: UserState) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
         if let Some(start) = self.start {
             if let Some(end) = self.end {
-                let p0 = user_state.to_window(start);
-                let p1 = user_state.to_window(end);
+                let p0 = user_state.to_window(start).0;
+                let p1 = user_state.to_window(end).0;
 
                 let middle = (p0 + p1) / 2.0;
 

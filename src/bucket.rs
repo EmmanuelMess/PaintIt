@@ -1,43 +1,44 @@
-use std::collections::HashSet;
+use crate::update_execute_action::UpdateExecuteAction;
+use crate::user_state::{CanvasVector2, UserState};
 use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::math::Vector2;
 use raylib::prelude::Image;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
+use raylib::{RaylibHandle, RaylibThread};
+use std::collections::HashSet;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct BucketState {
-    mouse_position_in_canvas: Option<Vector2>,
+    mouse_position: Option<CanvasVector2>,
     color: Color,
 }
 
 impl UpdateExecuteAction for BucketState {
-    fn update_pressed(&mut self, user_state: UserState) {
-        self.mouse_position_in_canvas = Option::from(user_state.to_canvas(user_state.mouse_position));
+    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+        self.mouse_position = Option::from(user_state.to_canvas(user_state.mouse_position));
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, _: UserState) {
-        self.mouse_position_in_canvas = None;
+    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+        self.mouse_position = None;
     }
 
-    fn update_after_draw(&mut self, _: UserState) {}
+    fn update_after_draw(&mut self, user_state: &UserState) {}
 
     fn draw(&mut self, image: &mut Image) -> bool {
-        match self.mouse_position_in_canvas {
-            Some(mouse_position_in_canvas) => {
+        match self.mouse_position {
+            Some(mouse_position) => {
                 // TODO make cleaner and faster
 
                 let replaced_color =
                     image.get_color(
-                        mouse_position_in_canvas.x as i32,
-                        mouse_position_in_canvas.y as i32
+                        mouse_position.0.x as i32,
+                        mouse_position.0.y as i32
                     );
 
                 let mut repaint = HashSet::<(i32, i32)>::new();
                 let mut stack = Vec::<Vector2>::new();
-                stack.push(mouse_position_in_canvas);
+                stack.push(mouse_position.0);
                 while let Some(node) = stack.pop() {
                     if repaint.contains(&(node.x as i32, node.y as i32)) {
                         continue;
@@ -76,7 +77,7 @@ impl UpdateExecuteAction for BucketState {
         }
     }
 
-    fn draw_state(&self, _: &mut RaylibDrawHandle, _: UserState) {}
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {}
 
     fn get_color(&self) -> Option<Color> {
         None

@@ -1,15 +1,16 @@
-use std::f32::consts::TAU;
+use crate::update_execute_action::UpdateExecuteAction;
+use crate::user_state::{CanvasVector2, UserState};
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
 use raylib::math::{Rectangle, Vector2};
 use raylib::prelude::Image;
-use crate::update_execute_action::UpdateExecuteAction;
-use crate::user_state::UserState;
+use raylib::{RaylibHandle, RaylibThread};
+use std::f32::consts::TAU;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
 pub struct RoundedRectangleState {
-    start: Option<Vector2>,
-    end: Option<Vector2>,
+    start: Option<CanvasVector2>,
+    end: Option<CanvasVector2>,
     draw_now: bool,
     color: Color,
 }
@@ -89,7 +90,7 @@ macro_rules! draw_rounded_rectangle {
 }
 
 impl UpdateExecuteAction for RoundedRectangleState {
-    fn update_pressed(&mut self, user_state: UserState) {
+    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
         } else {
@@ -99,13 +100,13 @@ impl UpdateExecuteAction for RoundedRectangleState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, _: UserState) {
+    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
         if self.start != None && self.end != None {
             self.draw_now = true;
         }
     }
 
-    fn update_after_draw(&mut self, _: UserState) {
+    fn update_after_draw(&mut self, user_state: &UserState) {
         if self.draw_now {
             self.start = None;
             self.end = None;
@@ -120,18 +121,20 @@ impl UpdateExecuteAction for RoundedRectangleState {
 
         if let Some(start) = self.start {
             if let Some(end) = self.end {
+                let p0 = start.0;
+                let p1 = end.0;
                 let color = self.color;
-                draw_rounded_rectangle!(image, start, end, color);
+                draw_rounded_rectangle!(image, p0, p1, color);
             }
         }
         true
     }
 
-    fn draw_state(&self, handle: &mut RaylibDrawHandle, user_state: UserState) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
         if let Some(start) = self.start {
             if let Some(end) = self.end {
-                let p0 = user_state.to_window(start);
-                let p1 = user_state.to_window(end);
+                let p0 = user_state.to_window(start).0;
+                let p1 = user_state.to_window(end).0;
                 let color = self.color;
                 draw_rounded_rectangle!(handle, p0, p1, color);
             }

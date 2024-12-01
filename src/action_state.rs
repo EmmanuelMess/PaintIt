@@ -9,12 +9,13 @@ use crate::pencil::PencilState;
 use crate::polygon::PolygonState;
 use crate::rectangle::RectangleState;
 use crate::rounded_rectangle::RoundedRectangleState;
+use crate::select::SelectState;
 use crate::spray::SprayState;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 pub enum ActionState {
     FreeFormSelect,
-    Select,
+    Select(SelectState),
     Eraser(EraserState),
     PaintBucket(BucketState),
     ColorPicker(ColorPickerState),
@@ -36,7 +37,7 @@ macro_rules! specify_state {
     ( $action:ident, $state:ident, $expr:expr ) => {
         match $action {
             ActionState::FreeFormSelect => panic!("State not found"),
-            ActionState::Select => panic!("State not found"),
+            ActionState::Select($state) => $expr,
             ActionState::Eraser($state) => $expr,
             ActionState::PaintBucket(ref mut $state) => $expr,
             ActionState::ColorPicker(ref mut $state) => $expr,
@@ -59,7 +60,7 @@ impl From<&ActionState> for u32 {
     fn from(value: &ActionState) -> u32 {
         match value {
             ActionState::FreeFormSelect => 0,
-            ActionState::Select => 1,
+            ActionState::Select(_) => 1,
             ActionState::Eraser(_) => 2,
             ActionState::PaintBucket(_) => 3,
             ActionState::ColorPicker(_) => 4,
@@ -84,7 +85,7 @@ impl TryFrom<u32> for ActionState {
     fn try_from(value: u32) -> Result<Self, Self::Error> {
         match value {
             0 => Ok(ActionState::FreeFormSelect),
-            1 => Ok(ActionState::Select),
+            1 => Ok(ActionState::Select(Default::default())),
             2 => Ok(ActionState::Eraser(Default::default())),
             3 => Ok(ActionState::PaintBucket(Default::default())),
             4 => Ok(ActionState::ColorPicker(Default::default())),

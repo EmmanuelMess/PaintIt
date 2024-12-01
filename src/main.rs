@@ -4,7 +4,7 @@ use PaintIt::brush::{BrushSize, BrushType};
 use PaintIt::specify_state;
 use PaintIt::spray::SpraySize;
 use PaintIt::update_execute_action::UpdateExecuteAction;
-use PaintIt::user_state::UserState;
+use PaintIt::user_state::{WindowVector2, UserState};
 
 const TEXTURE_SIZE: usize = 16;
 const TEXTURE_NUMBER: usize = 16;
@@ -58,12 +58,13 @@ fn main() {
         // Update
         let mouse_position = rl.get_mouse_position();
         let user_state = UserState {
-            mouse_position,
+            mouse_position: WindowVector2(mouse_position),
             current_colors,
-            canvas_position,
+            canvas_position: WindowVector2(canvas_position),
             spray_size: SpraySize::SizeOne,
             brush_size: BrushSize::Two,
             brush_type: BrushType::Circle,
+            canvas_image: canvas_image.clone(),
         };
 
         for i in 0..TEXTURE_NUMBER {
@@ -89,15 +90,16 @@ fn main() {
         if let Some(generic_state) = current_pressed.as_deref_mut() {
             specify_state!(generic_state, specific_state, {
                     if canvas_pressed {
-                        specific_state.update_pressed(user_state);
+                        specific_state.update_pressed(&user_state, &mut rl, &thread);
                     } else {
-                        specific_state.update_unpressed(user_state);
+                        specific_state.update_unpressed(&user_state, &mut rl, &thread);
                     }
 
+                    // TODO use a layer system to allow for do-undo
                     canvas_dirty = specific_state.draw(&mut canvas_image);
                     if canvas_dirty {
                         println!("{:?}", specific_state);
-                        specific_state.update_after_draw(user_state);
+                        specific_state.update_after_draw(&user_state);
                     }
                     if let Some(color) =  specific_state.get_color() {
                         current_colors[0] = color;
@@ -115,11 +117,18 @@ fn main() {
 
         handle.clear_background(Color::GRAY);
 
-        handle.draw_rectangle(0, 0, (BUTTON_SIZE * 2) as i32, SCREEN_HEIGHT-20, Color::LIGHTGRAY);
-        handle.draw_rectangle_lines(0, 0, (BUTTON_SIZE * 2) as i32, SCREEN_HEIGHT-20, Color::BLACK);
+        handle.draw_rectangle(0, 0,
+                              (BUTTON_SIZE * 2) as i32, SCREEN_HEIGHT-20,
+                              Color::LIGHTGRAY);
+        handle.draw_rectangle_lines(0, 0,
+                                    (BUTTON_SIZE * 2) as i32, SCREEN_HEIGHT-20,
+                                    Color::BLACK);
 
         for i in 0..TEXTURE_NUMBER {
-            let position = Vector2 { x: button_positions[i].x + 8f32, y: button_positions[i].y + 8f32 };
+            let position = Vector2 {
+                x: button_positions[i].x + 8f32,
+                y: button_positions[i].y + 8f32
+            };
 
             if current_pressed.as_ref().is_some_and(|b|  u32::from(b) == (i as u32)) {
                 // Draw the pressed button
@@ -153,7 +162,7 @@ fn main() {
 
         if let Some(generic_state) = current_pressed.as_deref_mut() {
             specify_state!(generic_state, specific_state, {
-                specific_state.draw_state(&mut handle, user_state);
+                specific_state.draw_state(&user_state, &mut handle, &thread);
             });
         }
 
