@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install alsa, udev, glfw3, sdl, and wayland
+      run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libglfw3-dev libwayland-dev libsdl2-dev
     - name: Build
       run: cargo build --verbose
     - name: Run tests
