@@ -16,7 +16,7 @@ pub struct PolygonState {
 const POLYGON_CLOSE_DISTANCE: f32 = 5.0;
 
 impl UpdateExecuteAction for PolygonState {
-    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_pressed(&mut self, user_state: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         // First point gets added immediately, after the first, add them on press
         if self.points.is_empty() {
             self.points.push(user_state.to_canvas(user_state.mouse_position));
@@ -26,7 +26,7 @@ impl UpdateExecuteAction for PolygonState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_unpressed(&mut self, _: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         if let Some(new_point) = self.new_point {
             let first = self.points.first().unwrap();
 
@@ -45,7 +45,7 @@ impl UpdateExecuteAction for PolygonState {
         }
     }
 
-    fn update_after_draw(&mut self, user_state: &UserState) {
+    fn update_after_draw(&mut self, _: &UserState) {
     }
 
     fn draw(&mut self, image: &mut Image) -> bool {
@@ -84,7 +84,7 @@ impl UpdateExecuteAction for PolygonState {
         }
     }
 
-    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, _: &RaylibThread) {
         for i in 1..self.points.len() {
             let p0 = user_state.to_window(self.points[i-1]).0;
             let p1 = user_state.to_window(self.points[i]).0;

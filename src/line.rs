@@ -14,7 +14,7 @@ pub struct LineState {
 }
 
 impl UpdateExecuteAction for LineState {
-    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_pressed(&mut self, user_state: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
         } else {
@@ -23,13 +23,13 @@ impl UpdateExecuteAction for LineState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_unpressed(&mut self, _: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         if self.start != None && self.end != None {
             self.draw_now = true;
         }
     }
 
-    fn update_after_draw(&mut self, user_state: &UserState) {
+    fn update_after_draw(&mut self, _: &UserState) {
         if self.draw_now {
             self.start = None;
             self.end = None;
@@ -46,7 +46,7 @@ impl UpdateExecuteAction for LineState {
         return false;
     }
 
-    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, _: &RaylibThread) {
         if !(self.start != None && self.end != None) {
             return;
         }

@@ -32,17 +32,17 @@ pub struct SprayState {
 }
 
 impl UpdateExecuteAction for SprayState {
-    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_pressed(&mut self, user_state: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         self.mouse_position = Option::from(user_state.to_canvas(user_state.mouse_position));
         self.radius = user_state.spray_size.radius();
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_unpressed(&mut self, _: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         self.mouse_position = None;
     }
 
-    fn update_after_draw(&mut self, user_state: &UserState) {}
+    fn update_after_draw(&mut self, _: &UserState) {}
 
     fn draw(&mut self, image: &mut Image) -> bool {
         match self.mouse_position {
@@ -61,7 +61,7 @@ impl UpdateExecuteAction for SprayState {
         }
     }
 
-    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {}
+    fn draw_state(&self, _: &UserState, _: &mut RaylibDrawHandle, _: &RaylibThread) {}
 
     fn get_color(&self) -> Option<Color> {
         None

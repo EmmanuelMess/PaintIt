@@ -90,7 +90,7 @@ macro_rules! draw_rounded_rectangle {
 }
 
 impl UpdateExecuteAction for RoundedRectangleState {
-    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_pressed(&mut self, user_state: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
         } else {
@@ -100,13 +100,13 @@ impl UpdateExecuteAction for RoundedRectangleState {
         self.color = user_state.current_colors[0];
     }
 
-    fn update_unpressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_unpressed(&mut self, _: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         if self.start != None && self.end != None {
             self.draw_now = true;
         }
     }
 
-    fn update_after_draw(&mut self, user_state: &UserState) {
+    fn update_after_draw(&mut self, _: &UserState) {
         if self.draw_now {
             self.start = None;
             self.end = None;
@@ -130,7 +130,7 @@ impl UpdateExecuteAction for RoundedRectangleState {
         true
     }
 
-    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, _: &RaylibThread) {
         if let Some(start) = self.start {
             if let Some(end) = self.end {
                 let p0 = user_state.to_window(start).0;

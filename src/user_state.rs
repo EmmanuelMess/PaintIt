@@ -1,6 +1,6 @@
 use raylib::color::Color;
 use raylib::math::Vector2;
-use raylib::texture::{Image, Texture2D};
+use raylib::texture::{Image};
 use crate::brush::{BrushSize, BrushType};
 use crate::spray::SpraySize;
 

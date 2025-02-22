@@ -3,8 +3,8 @@ use crate::update_execute_action::UpdateExecuteAction;
 use crate::user_state::{CanvasVector2, UserState};
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
-use raylib::math::{Rectangle, Vector2};
-use raylib::prelude::{Image, WeakTexture2D};
+use raylib::math::{Rectangle};
+use raylib::prelude::{Image};
 use raylib::{RaylibHandle, RaylibThread};
 use raylib::texture::Texture2D;
 use crate::raylib_extensions;
@@ -45,7 +45,7 @@ pub struct SelectState {
 }
 
 impl UpdateExecuteAction for SelectState {
-    fn update_pressed(&mut self, user_state: &UserState, rl: &mut RaylibHandle, thread: &RaylibThread) {
+    fn update_pressed(&mut self, user_state: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         let mouse_position = user_state.to_canvas(user_state.mouse_position);
 
         self.state = match self.clone().state {
@@ -134,7 +134,7 @@ impl UpdateExecuteAction for SelectState {
         };
     }
 
-    fn update_after_draw(&mut self, user_state: &UserState) {}
+    fn update_after_draw(&mut self, _: &UserState) {}
 
     fn draw(&mut self, image: &mut Image) -> bool {
         if let Some(delete_section) = self.clone().delete_section {
@@ -155,7 +155,8 @@ impl UpdateExecuteAction for SelectState {
                 false
             },
             MoveStateMachine::Draw { start, end,
-                selected_image, selected_texture } => {
+                selected_image, selected_texture: _selected_texture
+            } => {
                 let rectangle_dst = raylib_extensions::generate_rectangle(start.0, end.0);
                 let rectangle_src = Rectangle { x: 0.0, y: 0.0, width: rectangle_dst.width,
                     height: rectangle_dst.height };
@@ -166,7 +167,7 @@ impl UpdateExecuteAction for SelectState {
         }
     }
 
-    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, thread: &RaylibThread) {
+    fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, _: &RaylibThread) {
         match self.state.clone() {
             MoveStateMachine::Nothing => {},
             MoveStateMachine::StartSelected { start, end } => {
@@ -176,11 +177,11 @@ impl UpdateExecuteAction for SelectState {
                 handle.draw_rectangle_lines_ex(rectangle, 1.0, Color::BLACK);
             },
             | MoveStateMachine::AreaSelected { start, end,
-                selected_image, selected_texture }
+                selected_image: _, selected_texture }
             | MoveStateMachine::Moving { start, end,
-                last_mouse_position: _, selected_image, selected_texture }
+                last_mouse_position: _, selected_image: _, selected_texture }
             | MoveStateMachine::Draw { start, end,
-                selected_image, selected_texture } => {
+                selected_image: _, selected_texture } => {
                 let p0 = user_state.to_window(start).0;
                 let p1 = user_state.to_window(end).0;
                 let rectangle = raylib_extensions::generate_rectangle(p0, p1);
