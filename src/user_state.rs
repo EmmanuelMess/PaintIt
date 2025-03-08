@@ -1,8 +1,8 @@
 use raylib::color::Color;
 use raylib::math::Vector2;
 use raylib::texture::{Image};
-use crate::brush::{BrushSize, BrushType};
-use crate::spray::SpraySize;
+use crate::actions::brush::{BrushSize, BrushType};
+use crate::actions::spray::SpraySize;
 
 /// Vector2 in the Canvas coordinate system
 #[derive(Debug, PartialEq, Copy, Clone, Default)]

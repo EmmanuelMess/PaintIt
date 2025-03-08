@@ -1,20 +1,20 @@
-use crate::update_execute_action::UpdateExecuteAction;
+use crate::actions::update_execute_action::UpdateExecuteAction;
 use crate::user_state::{CanvasVector2, UserState};
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
+use raylib::math::Rectangle;
 use raylib::prelude::Image;
 use raylib::{RaylibHandle, RaylibThread};
-use std::f32::consts::TAU;
 
 #[derive(Debug, PartialEq, Copy, Clone, Default)]
-pub struct EllipseState {
+pub struct RectangleState {
     start: Option<CanvasVector2>,
     end: Option<CanvasVector2>,
     draw_now: bool,
     color: Color,
 }
 
-impl UpdateExecuteAction for EllipseState {
+impl UpdateExecuteAction for RectangleState {
     fn update_pressed(&mut self, user_state: &UserState, _: &mut RaylibHandle, _: &RaylibThread) {
         if self.start == None {
             self.start = Option::from(user_state.to_canvas(user_state.mouse_position));
@@ -40,52 +40,42 @@ impl UpdateExecuteAction for EllipseState {
     }
 
     fn draw(&mut self, image: &mut Image) -> bool {
-        if !self.draw_now {
+        if !(self.draw_now) {
             return false;
         }
 
-        let p0 = self.start.unwrap().0;
-        let p1 = self.end.unwrap().0;
+        let p0 = self.start.unwrap();
+        let p1 = self.end.unwrap();
 
-        let middle = (p0 + p1) / 2.0;
+        let size = p0.0 - p1.0;
 
-        let a = (p0.x - p1.x).abs() / 2.0;
-        let b = (p0.y - p1.y).abs() / 2.0;
-
-        let mut t = 0f32;
-        while t < TAU {
-            let px = middle.x + a * f32::cos(t);
-            let py = middle.y + b * f32::sin(t);
-
-            image.draw_pixel(px as i32, py as i32, self.color);
-
-            t += 0.001;
-        }
+        let rectangle = Rectangle {
+            x: f32::min(p0.0.x, p1.0.x),
+            y: f32::min(p0.0.y, p1.0.y),
+            width: size.x.abs(),
+            height: size.y.abs(),
+        };
+        image.draw_rectangle_lines(rectangle, 1, self.color);
         true
     }
 
     fn draw_state(&self, user_state: &UserState, handle: &mut RaylibDrawHandle, _: &RaylibThread) {
-        if let Some(start) = self.start {
-            if let Some(end) = self.end {
-                let p0 = user_state.to_window(start).0;
-                let p1 = user_state.to_window(end).0;
-
-                let middle = (p0 + p1) / 2.0;
-
-                let a = (p0.x - p1.x).abs() / 2.0;
-                let b = (p0.y - p1.y).abs() / 2.0;
-
-                let mut t = 0f32;
-                while t < TAU {
-                    let px = middle.x + a * f32::cos(t);
-                    let py = middle.y + b * f32::sin(t);
-
-                    handle.draw_pixel(px as i32, py as i32, self.color);
-
-                    t += 0.001;
-                }
-            }
+        if !(self.start != None && self.end != None) {
+            return;
         }
+
+        let p0 = user_state.to_window(self.start.unwrap());
+        let p1 = user_state.to_window(self.end.unwrap());
+
+        let size = p0.0 - p1.0;
+
+        let rectangle = Rectangle {
+            x: f32::min(p0.0.x, p1.0.x),
+            y: f32::min(p0.0.y, p1.0.y),
+            width: size.x.abs(),
+            height: size.y.abs(),
+        };
+        handle.draw_rectangle_lines_ex(rectangle, 1f32, self.color);
     }
 
     fn get_color(&self) -> Option<Color> {

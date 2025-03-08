@@ -1,16 +1,16 @@
 use std::ops::{Deref, DerefMut};
-use crate::brush::BrushState;
-use crate::bucket::BucketState;
-use crate::color_picker::ColorPickerState;
-use crate::ellipse::EllipseState;
-use crate::eraser::EraserState;
-use crate::line::LineState;
-use crate::pencil::PencilState;
-use crate::polygon::PolygonState;
-use crate::rectangle::RectangleState;
-use crate::rounded_rectangle::RoundedRectangleState;
-use crate::select::SelectState;
-use crate::spray::SprayState;
+use crate::actions::brush::BrushState;
+use crate::actions::bucket::BucketState;
+use crate::actions::color_picker::ColorPickerState;
+use crate::actions::ellipse::EllipseState;
+use crate::actions::eraser::EraserState;
+use crate::actions::line::LineState;
+use crate::actions::pencil::PencilState;
+use crate::actions::polygon::PolygonState;
+use crate::actions::rectangle::RectangleState;
+use crate::actions::rounded_rectangle::RoundedRectangleState;
+use crate::actions::select::SelectState;
+use crate::actions::spray::SprayState;
 
 #[derive(Debug, Clone)]
 pub enum ActionState {
