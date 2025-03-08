@@ -64,7 +64,7 @@ fn main() {
             spray_size: SpraySize::SizeOne,
             brush_size: BrushSize::Two,
             brush_type: BrushType::Circle,
-            canvas_image: canvas_image.clone(),
+            canvas_image: canvas_image.clone(), // TODO this clone is too slow to be in the main loop
         };
 
         for i in 0..TEXTURE_NUMBER {
@@ -89,21 +89,22 @@ fn main() {
         //TODO change to previous tool after color picker
         if let Some(generic_state) = current_pressed.as_deref_mut() {
             specify_state!(generic_state, specific_state, {
-                    if canvas_pressed {
-                        specific_state.update_pressed(&user_state, &mut rl, &thread);
-                    } else {
-                        specific_state.update_unpressed(&user_state, &mut rl, &thread);
-                    }
+                if canvas_pressed {
+                    specific_state.update_pressed(&user_state, &mut rl, &thread);
+                } else {
+                    specific_state.update_unpressed(&user_state, &mut rl, &thread);
+                }
 
-                    // TODO use a layer system to allow for do-undo
-                    canvas_dirty = specific_state.draw(&mut canvas_image);
-                    if canvas_dirty {
-                        println!("{:?}", specific_state);
-                        specific_state.update_after_draw(&user_state);
-                    }
-                    if let Some(color) =  specific_state.get_color() {
-                        current_colors[0] = color;
-                    }
+                // TODO use a layer system to allow for do-undo
+                canvas_dirty = specific_state.draw(&mut canvas_image);
+
+                if canvas_dirty {
+                    println!("{:?}", specific_state);
+                    specific_state.update_after_draw(&user_state);
+                }
+                if let Some(color) =  specific_state.get_color() {
+                    current_colors[0] = color;
+                }
              });
         }
 
